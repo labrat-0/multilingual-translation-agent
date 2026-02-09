@@ -1,20 +1,28 @@
 {
+    "title": "Multilingual Translation Agent",
+    "description": "Professional AI-driven translation with language auto-detection.",
+    "type": "object",
+    "schemaVersion": 1,
     "properties": {
         "text": {
-            "title": "Text",
+            "title": "Text to Translate",
             "type": "string",
-            "editor": "textarea"
+            "description": "Enter the text you want the agent to process.",
+            "editor": "textarea",
+            "prefill": "Hello world!"
         },
         "target_language": {
-            "title": "Translate to",
+            "title": "Target Language",
             "type": "string",
-            "default": "FR",
-            "description": "ISO code (EN, FR, ES, DE, etc.)"
+            "description": "The language code you want to translate into (e.g., FR, ES, DE).",
+            "default": "FR"
         },
         "source_language": {
-            "title": "Translate from (Optional)",
+            "title": "Source Language (Optional)",
             "type": "string",
-            "description": "Leave blank to auto-detect."
+            "description": "Leave blank to let the agent auto-detect the language.",
+            "nullable": true
         }
-    }
+    },
+    "required": ["text", "target_language"]
 }
