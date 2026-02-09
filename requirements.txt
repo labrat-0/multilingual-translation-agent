@@ -1,3 +1,5 @@
+apify
 torch
 transformers
-requests
+sentencepiece
+sacremoses
