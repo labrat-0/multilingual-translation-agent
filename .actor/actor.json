@@ -5,6 +5,6 @@
   "description": "A Python translation utility actor that translates text between languages and returns translation results with character count for billing.",
   "version": "0.1.0",
   "dockerfile": "../Dockerfile",
-  "main": "src/main.py",
+  "main": "src/agent/main.py",
   "input": "./INPUT_SCHEMA.json"
 }
