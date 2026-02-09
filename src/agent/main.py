@@ -5,21 +5,20 @@ from agent.pricing import calculate_billing
 
 async def main():
     async with Actor:
-        # Get input provided to the Actor run
-        actor_input = await Actor.get_input() or {}
+        Actor.log.info("Actor started with input")
 
-        # Read required fields
+        actor_input = await Actor.get_input()
         text = actor_input.get("text", "")
         src_lang = actor_input.get("source_language", "")
         tgt_lang = actor_input.get("target_language", "")
 
-        # Perform translation
+        Actor.log.info(f"Received text: {text}")
         translated_text = translate_text(text, src_lang, tgt_lang)
+        Actor.log.info(f"Translated text: {translated_text}")
 
-        # Calculate billing based on input text
         billing = calculate_billing(text)
+        Actor.log.info(f"Billing computed: {billing}")
 
-        # Prepare output object
         output = {
             "original_text": text,
             "translated_text": translated_text,
@@ -27,9 +26,10 @@ async def main():
             "billed_amount": billing["amount"],
             "language_pair": f"{src_lang}->{tgt_lang}"
         }
+        Actor.log.info(f"Pushing output: {output}")
 
-        # Push output to default dataset
         await Actor.push_data(output)
+        Actor.log.info("Output pushed successfully")
 
 if __name__ == "__main__":
     asyncio.run(main())
