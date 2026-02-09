@@ -1,51 +1,38 @@
-# Multilingual Translation Utility Agent
 
-A Python-based translation utility agent designed to be used by other agents
-and automated workflows. The agent translates text between languages and
-returns deterministic usage metrics suitable for per-character billing.
 
-## Purpose
+````md
+## Sample Usage
 
-This project provides a reusable, infrastructure-level translation agent
-that can be composed into larger agent systems such as scrapers, customer
-support agents, content localization pipelines, and market research tools.
+Below is a simple example showing how to call this translation agent
+from Python and how to calculate the billed character count:
 
-## Features
+```python
+from translator import translate_text
+from pricing import calculate_billing
 
-- Multilingual text translation
-- Explicit source and target language control
-- Deterministic character counting for billing
-- Clean, predictable inputs and outputs
-- Designed for agent-to-agent usage
+# Text to translate
+text = "Hello world!"
 
-## Inputs
+# Perform translation
+translated = translate_text(text, "EN", "ES")
 
-- `text`: Text to translate
-- `source_language`: Language code of the input text
-- `target_language`: Language code of the output text
+# Calculate billing
+billing = calculate_billing(text)
 
-## Outputs
+print("Original:", text)
+print("Translated:", translated)
+print(
+    f"Characters: {billing['character_count']}, "
+    f"Cost: ${billing['amount']}"
+)
+````
 
-- `translated_text`: Translated content
-- `character_count`: Number of billable input characters
-- `language_pair`: Source and target language codes
+Expected output example:
 
-## Pricing Model
+```
+Original: Hello world!
+Translated: ¡Hola mundo!
+Characters: 12, Cost: $0.00024
+```
 
-This agent is designed to support per-character pricing.
-Billing is calculated based on the number of input characters processed per request.
 
-Example:
-- Input characters: 1,250
-- Billed characters: 1,250
-
-## Constraints
-
-- Text-only translation
-- No personal data handling
-- Deterministic, auditable usage reporting
-- Translation of user-provided content only
-
-## Status
-
-Initial scaffold. Translation backend and execution logic are under active development.
