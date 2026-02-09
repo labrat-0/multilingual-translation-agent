@@ -1,13 +1,21 @@
-FROM apify/actor-python:latest
+# Use a lightweight Python image
+FROM python:3.11-slim
 
-# Set src/ on the Python module search path
-ENV PYTHONPATH=/usr/src/app/src
+# Install system dependencies needed for sentencepiece/transformers
+RUN apt-get update && apt-get install -y \
+    gcc \
+    g++ \
+    && rm -rf /var/lib/apt/lists/*
 
-# Copy all files from the repo
-COPY . .
+# Set working directory
+WORKDIR /usr/src/app
 
-# Install Python dependencies
+# Copy requirements and install
+COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Default command to run your actor
-CMD ["python", "src/agent/main.py"]
+# Copy the rest of the code
+COPY . .
+
+# Run the agent
+CMD ["python3", "-m", "src.agent.main"]
