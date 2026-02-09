@@ -1,27 +1,26 @@
 {
-  "title": "Translation Agent Input",
-  "description": "Provide the text to translate and the source and target language codes.",
-  "type": "object",
-  "schemaVersion": 1,
-  "properties": {
-    "text": {
-      "title": "Text to Translate",
-      "description": "The text that you want the agent to translate.",
-      "type": "string",
-      "editor": "textarea"
+    "title": "Multilingual Translation Agent",
+    "type": "object",
+    "schemaVersion": 1,
+    "properties": {
+        "text": {
+            "title": "Text to Translate",
+            "type": "string",
+            "description": "Enter the text you want to translate.",
+            "editor": "textarea"
+        },
+        "target_language": {
+            "title": "Target Language",
+            "type": "string",
+            "description": "e.g., FR, ES, DE, IT",
+            "default": "FR"
+        },
+        "source_language": {
+            "title": "Source Language",
+            "type": "string",
+            "description": "e.g., EN",
+            "default": "EN"
+        }
     },
-    "source_language": {
-      "title": "Source Language",
-      "description": "Language code of the input text (e.g. EN).",
-      "type": "string",
-      "editor": "textfield"
-    },
-    "target_language": {
-      "title": "Target Language",
-      "description": "Language code to translate into (e.g. ES).",
-      "type": "string",
-      "editor": "textfield"
-    }
-  },
-  "required": ["text", "source_language", "target_language"]
+    "required": ["text", "target_language"]
 }
