@@ -1,5 +1,8 @@
 FROM apify/actor-python:latest
 
+# Set src/ on the Python module search path
+ENV PYTHONPATH=/usr/src/app/src
+
 # Copy all files from the repo
 COPY . .
 
