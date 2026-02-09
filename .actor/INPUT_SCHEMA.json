@@ -1,19 +1,30 @@
 {
-    "title": "Translation Agent Input Schema",
+    "title": "Multilingual Translation Agent",
+    "description": "AI-powered agent that translates text with automatic language detection.",
     "type": "object",
     "schemaVersion": 1,
     "properties": {
         "text": {
             "title": "Text to Translate",
             "type": "string",
-            "description": "Text to process.",
-            "editor": "textarea"
+            "description": "Enter the text you want the agent to process. Use this for long-form content or single sentences.",
+            "editor": "textarea",
+            "prefill": "How are you today?"
         },
         "target_language": {
             "title": "Target Language",
             "type": "string",
+            "description": "The ISO code of the language you want to translate TO (e.g., FR for French, ES for Spanish).",
+            "editor": "textfield",
             "default": "FR"
+        },
+        "source_language": {
+            "title": "Source Language (Optional)",
+            "type": "string",
+            "description": "The ISO code of the source language. Leave blank, and the agent will detect it automatically.",
+            "editor": "textfield",
+            "nullable": true
         }
     },
-    "required": ["text"]
+    "required": ["text", "target_language"]
 }
