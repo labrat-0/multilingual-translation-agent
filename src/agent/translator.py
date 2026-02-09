@@ -1,40 +1,26 @@
 from transformers import MarianMTModel, MarianTokenizer
 import torch
 
-# Cache loaded models
-MODEL_CACHE = {}
+def translate_text(text, source_lang, target_lang):
+    model_name = f'Helsinki-NLP/opus-mt-{source_lang.lower()}-{target_lang.lower()}'
+    
+    tokenizer = MarianTokenizer.from_pretrained(model_name)
+    model = MarianMTModel.from_pretrained(model_name)
 
-def get_marian_model(source: str, target: str):
-    """
-    Load a MarianMT model and tokenizer for the source->target language pair.
-    """
-    key = f"{source}-{target}"
-    if key not in MODEL_CACHE:
-        # Construct the model name
-        model_name = f"Helsinki-NLP/opus-mt-{source}-{target}"
-        tokenizer = MarianTokenizer.from_pretrained(model_name)
-        model = MarianMTModel.from_pretrained(model_name)
-        model.eval()
-        MODEL_CACHE[key] = (tokenizer, model)
-    return MODEL_CACHE[key]
+    # Break text into sentences or chunks to avoid the 512-token limit
+    paragraphs = text.split('\n')
+    translated_paragraphs = []
 
-def translate_text(text: str, source_language: str, target_language: str) -> str:
-    """
-    Translate the text from source_language to target_language using MarianMT models.
-    """
-    source = source_language.lower()
-    target = target_language.lower()
+    for para in paragraphs:
+        if not para.strip(): continue
+        
+        # Tokenize and generate
+        inputs = tokenizer(para, return_tensors="pt", padding=True, truncation=True)
+        
+        with torch.no_grad(): # Saves memory/RAM
+            translated_tokens = model.generate(**inputs)
+        
+        result = tokenizer.decode(translated_tokens[0], skip_special_tokens=True)
+        translated_paragraphs.append(result)
 
-    # Load model + tokenizer for this language pair
-    tokenizer, model = get_marian_model(source, target)
-
-    # Tokenize
-    inputs = tokenizer([text], return_tensors="pt", padding=True)
-
-    # Generate translation
-    with torch.no_grad():
-        translated_tokens = model.generate(**inputs)
-
-    # Decode and return
-    translated = tokenizer.batch_decode(translated_tokens, skip_special_tokens=True)
-    return translated[0] if translated else ""
+    return "\n".join(translated_paragraphs)
