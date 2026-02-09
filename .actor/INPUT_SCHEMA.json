@@ -1,26 +1,20 @@
 {
-    "title": "Multilingual Translation Agent",
-    "type": "object",
-    "schemaVersion": 1,
     "properties": {
         "text": {
-            "title": "Text to Translate",
+            "title": "Text",
             "type": "string",
-            "description": "Enter the text you want to translate.",
             "editor": "textarea"
         },
         "target_language": {
-            "title": "Target Language",
+            "title": "Translate to",
             "type": "string",
-            "description": "e.g., FR, ES, DE, IT",
-            "default": "FR"
+            "default": "FR",
+            "description": "ISO code (EN, FR, ES, DE, etc.)"
         },
         "source_language": {
-            "title": "Source Language",
+            "title": "Translate from (Optional)",
             "type": "string",
-            "description": "e.g., EN",
-            "default": "EN"
+            "description": "Leave blank to auto-detect."
         }
-    },
-    "required": ["text", "target_language"]
+    }
 }
