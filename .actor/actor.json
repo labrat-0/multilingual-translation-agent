@@ -2,9 +2,9 @@
   "actorSpecification": 1,
   "name": "multilingual-translation-agent",
   "title": "Multilingual Translation Utility Agent",
-  "description": "A Python translation utility agent that translates text between languages and returns translation results with character count for billing.",
+  "description": "...",
   "version": "0.1.0",
-  "dockerfile": "../Dockerfile",
+  "dockerfile": "./Dockerfile",
   "main": "src/agent/main.py",
   "input": "./INPUT_SCHEMA.json",
   "output": {
@@ -19,4 +19,3 @@
     }
   }
 }
-
