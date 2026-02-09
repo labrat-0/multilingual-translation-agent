@@ -1,7 +1,7 @@
 import asyncio
 from apify import Actor
-from translator import translate_text
-from pricing import calculate_billing
+from agent.translator import translate_text
+from agent.pricing import calculate_billing
 
 async def main():
     async with Actor:
