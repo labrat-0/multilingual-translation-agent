@@ -1,46 +1,36 @@
+import asyncio
 from apify import Actor
-from langdetect import detect, DetectorFactory
-from .translator import translate_text
-
-# Ensures the detection is consistent every time
-DetectorFactory.seed = 0 
+# Import your translation logic
+# Make sure the path below matches your file structure exactly!
+from .translator import translate_text 
 
 async def main():
     async with Actor:
+        # 1. Get the input from the Apify UI
         actor_input = await Actor.get_input() or {}
         text = actor_input.get("text")
-        target_lang = actor_input.get("target_language", "FR").lower()
-        source_lang = actor_input.get("source_language") # Might be None
+        target_lang = actor_input.get("target_language", "fr")
 
+        # Check if text exists to avoid errors
         if not text:
-            await Actor.fail(status_message="Missing 'text' input.")
+            print("No text provided in input!")
             return
 
-        # --- AUTO-DETECTION LOGIC ---
-        if not source_lang or source_lang.strip() == "":
-            Actor.log.info("Source language not provided. Detecting...")
-            try:
-                source_lang = detect(text)
-                Actor.log.info(f"Detected language: {source_lang.upper()}")
-            except Exception:
-                source_lang = "en" # Fallback to English if detection fails
-                Actor.log.warning("Detection failed, falling back to English.")
-        else:
-            source_lang = source_lang.lower()
-        # ----------------------------
+        print(f"Translating: {text} to {target_lang}")
 
-        # If source and target are the same, skip translation
-        if source_lang == target_lang:
-            await Actor.push_data({"translation": text, "note": "Source and target are the same."})
-            return
+        # 2. Run your translation logic
+        # Note: The first time this runs, it WILL be slow because 
+        # it's downloading the model (~300MB) inside the RUNNING actor.
+        translation = translate_text(text, target_lang)
 
-        try:
-            translation = translate_text(text, source_lang, target_lang)
-            await Actor.push_data({
-                "detected_source": source_lang.upper(),
-                "target": target_lang.upper(),
-                "original": text,
-                "translation": translation
-            })
-        except Exception as e:
-            await Actor.fail(status_message=f"Translation Error: {str(e)}")
+        # 3. PUSH THE DATA (This makes it appear in the 'Results' tab)
+        await Actor.push_data({
+            "original_text": text,
+            "translated_text": translation,
+            "target_language": target_lang
+        })
+        
+        print("Done! Check the 'Results' tab.")
+
+if __name__ == "__main__":
+    asyncio.run(main())
