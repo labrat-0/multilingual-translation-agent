@@ -1,26 +1,24 @@
-from transformers import MarianMTModel, MarianTokenizer
+import requests
 import torch
 
-def translate_text(text, source_lang, target_lang):
-    model_name = f'Helsinki-NLP/opus-mt-{source_lang.lower()}-{target_lang.lower()}'
-    
-    tokenizer = MarianTokenizer.from_pretrained(model_name)
-    model = MarianMTModel.from_pretrained(model_name)
+import time
 
-    # Break text into sentences or chunks to avoid the 512-token limit
-    paragraphs = text.split('\n')
-    translated_paragraphs = []
+RATE_LIMIT = 5  # seconds between requests
+def translate_text(text: str, source_language: str, target_language: str) -> str:
+    if len(text) > 5000:
+        return "Error: Text exceeds the 5000-character limit."
 
-    for para in paragraphs:
-        if not para.strip(): continue
-        
-        # Tokenize and generate
-        inputs = tokenizer(para, return_tensors="pt", padding=True, truncation=True)
-        
-        with torch.no_grad(): # Saves memory/RAM
-            translated_tokens = model.generate(**inputs)
-        
-        result = tokenizer.decode(translated_tokens[0], skip_special_tokens=True)
-        translated_paragraphs.append(result)
-
-    return "\n".join(translated_paragraphs)
+    time.sleep(RATE_LIMIT)  # Enforce rate limiting
+    url = "https://libretranslate.com/translate"
+    payload = {
+        "q": text,
+        "source": source_language,
+        "target": target_language,
+        "format": "text"
+    }
+    response = requests.post(url, data=payload)
+    if response.status_code == 200:
+        translated_text = response.json().get("translatedText", "Translation failed")
+    else:
+        translated_text = "Error: Unable to translate"
+    return translated_text
