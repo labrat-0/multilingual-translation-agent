@@ -1,34 +1,56 @@
 
 
 ````md
-## Sample Usage
+## Agent-to-Agent Usage
 
-Below is a simple example showing how to call this translation agent
-from Python and how to calculate the billed character count:
+This translation agent is designed for use by other agents in multi-agent workflows. It provides language translation as a service with per-character billing.
 
+### API Endpoint
+- **URL**: `https://your-agent-endpoint/translate`
+- **Method**: `POST`
+- **Content-Type**: `application/json`
+
+### Input Format
+```json
+{
+  "text": "Hello world!",
+  "source_language": "en",
+  "target_language": "es"
+}
+```
+
+### Output Format
+```json
+{
+  "original_text": "Hello world!",
+  "translated_text": "¡Hola mundo!",
+  "character_count": 12,
+  "billing_amount": 0.00024
+}
+```
+
+### Example Request
 ```python
-from translator import translate_text
-from pricing import calculate_billing
+import requests
 
-# Text to translate
-text = "Hello world!"
+url = "https://your-agent-endpoint/translate"
+input_data = {
+    "text": "Hello world!",
+    "source_language": "en",
+    "target_language": "es"
+}
+response = requests.post(url, json=input_data)
+print(response.json())
+```
 
-# Perform translation
-translated = translate_text(text, "EN", "ES")
-
-# Calculate billing
-billing = calculate_billing(text)
-
-print("Original:", text)
-print("Translated:", translated)
-print(
-    f"Characters: {billing['character_count']}, "
-    f"Cost: ${billing['amount']}"
-)
-````
-
-Expected output example:
-
+### Example Response
+```json
+{
+  "original_text": "Hello world!",
+  "translated_text": "¡Hola mundo!",
+  "character_count": 12,
+  "billing_amount": 0.00024
+}
 ```
 Original: Hello world!
 Translated: ¡Hola mundo!

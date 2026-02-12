@@ -1,10 +1,7 @@
 # Multilingual Translation Utility Agent Skill
 
 ## Description
-A Python-based agent that translates text between languages for other agents.
-Returns translated text along with character count for per-character billing.
-Designed for use in multi-agent workflows, scrapers, content pipelines,
-and customer support automation.
+This agent provides language translation as a Skill-as-a-Service for other agents. It translates text between languages, calculates the character count, and provides per-character billing. Designed for seamless integration in multi-agent workflows, it enables agents to leverage translation capabilities without building their own solutions.
 
 ## Inputs
 - `text`: String. Text to be translated.
