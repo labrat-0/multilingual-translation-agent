@@ -2,7 +2,8 @@ import asyncio
 from apify import Actor
 # Import your translation logic
 # Make sure the path below matches your file structure exactly!
-from .translator import translate_text 
+from .translator import translate_text
+import re 
 
 async def main():
     async with Actor:
@@ -11,7 +12,22 @@ async def main():
         text = actor_input.get("text")
         target_lang = actor_input.get("target_language", "fr")
 
-        # Check if text exists to avoid errors
+        # Validate inputs
+        def is_valid_iso639_1(code):
+            return bool(re.fullmatch(r'^[a-z]{2}$', code, re.IGNORECASE))
+
+        if not text:
+            print("Error: No text provided in input!")
+            return
+
+        if not is_valid_iso639_1(target_lang):
+            print(f"Error: Invalid target language code '{target_lang}'. Must be a valid ISO 639-1 code.")
+            return
+
+        source_lang = actor_input.get("source_language", "en")
+        if source_lang and not is_valid_iso639_1(source_lang):
+            print(f"Error: Invalid source language code '{source_lang}'. Must be a valid ISO 639-1 code.")
+            return
         if not text:
             print("No text provided in input!")
             return
@@ -24,10 +40,15 @@ async def main():
         translation = translate_text(text, actor_input.get("source_language", "en"), target_lang)
 
         # 3. PUSH THE DATA (This makes it appear in the 'Results' tab)
+        import time
+        start_time = time.time()
         await Actor.push_data({
             "original_text": text,
             "translated_text": translation,
-            "target_language": target_lang
+            "target_language": target_lang,
+            "source_language": source_lang,
+            "character_count": len(text),
+            "translation_time": time.time() - start_time
         })
         
         print("Done! Check the 'Results' tab.")

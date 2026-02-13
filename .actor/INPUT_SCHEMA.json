@@ -14,17 +14,18 @@
         "target_language": {
             "title": "Target Language",
             "type": "string",
-            "description": "The ISO code of the language you want to translate TO (e.g., FR for French, ES for Spanish).",
+            "description": "The ISO code of the language you want to translate TO (e.g., FR for French, ES for Spanish). Must be a valid ISO 639-1 code.",
             "editor": "textfield",
             "default": "FR"
         },
         "source_language": {
             "title": "Source Language (Optional)",
             "type": "string",
-            "description": "The ISO code of the source language. Leave blank, and the agent will detect it automatically.",
+            "description": "The ISO code of the source language. Leave blank, and the agent will detect it automatically. Must be a valid ISO 639-1 code.",
             "editor": "textfield",
             "nullable": true
         }
     },
-    "required": ["text", "target_language"]
+    "required": ["text", "target_language"],
+"additionalProperties": false
 }

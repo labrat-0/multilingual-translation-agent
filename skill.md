@@ -12,7 +12,10 @@ This agent provides language translation as a Skill-as-a-Service for other agent
 ## Outputs
 - `translated_text`: String. Translated text in target language.
 - `character_count`: Integer. Number of input characters billed.
-- `language_pair`: String. Source → Target language codes.
+- `source_language`: String. Language code of the input text (e.g., "EN").
+- `target_language`: String. Language code of the output text (e.g., "DE").
+- `character_count`: Integer. Number of input characters billed.
+- `translation_time`: Float. Time taken for the translation in seconds.
 
 ## Pricing Model
 - Charged per input character.
