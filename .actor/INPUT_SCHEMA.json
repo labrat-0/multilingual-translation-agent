@@ -30,9 +30,7 @@
 "api_key": {
             "title": "API Key (Optional)",
             "type": "string",
-            "description": "Your LibreTranslate API key. Leave blank if not available.",
-            "editor": "textfield",
-            "nullable": true
+            "description": "Your LibreTranslate API key. Leave blank if not available."
         },
         "additionalProperties": false
 }
