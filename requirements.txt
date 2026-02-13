@@ -1,6 +1,2 @@
-apify
-transformers
-sentencepiece
-sacremoses
-langdetect
-torch
+apify==3.2.0
+requests==2.32.3

@@ -24,13 +24,15 @@
             "description": "The ISO code of the source language. Leave blank, and the agent will detect it automatically. Must be a valid ISO 639-1 code.",
             "editor": "textfield",
             "nullable": true
+        },
+        "api_key": {
+            "title": "API Key (Optional)",
+            "type": "string",
+            "description": "Your LibreTranslate API key. Leave blank if not available.",
+            "editor": "textfield",
+            "nullable": true
         }
     },
     "required": ["text", "target_language"],
-"api_key": {
-            "title": "API Key (Optional)",
-            "type": "string",
-            "description": "Your LibreTranslate API key. Leave blank if not available."
-        },
-        "additionalProperties": false
+    "additionalProperties": false
 }
