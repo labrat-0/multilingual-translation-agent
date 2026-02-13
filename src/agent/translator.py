@@ -6,7 +6,7 @@ from functools import lru_cache
 
 RATE_LIMIT = 5  # seconds between requests
 @lru_cache(maxsize=128)
-def translate_text(text: str, source_language: str, target_language: str) -> dict | str:
+def translate_text(text: str, source_language: str, target_language: str, api_key: str = None) -> dict | str:
     if len(text) > 5000:
         return {
             "error": "Text exceeds the 5000-character limit."
@@ -14,6 +14,10 @@ def translate_text(text: str, source_language: str, target_language: str) -> dic
 
     time.sleep(RATE_LIMIT)  # Enforce rate limiting
     url = "https://libretranslate.com/translate"
+    headers = {}
+    if api_key:
+        headers['Authorization'] = f'Bearer {api_key}'
+
     payload = {
         "q": text,
         "source": source_language,
@@ -21,7 +25,7 @@ def translate_text(text: str, source_language: str, target_language: str) -> dic
         "format": "text"
     }
     try:
-        response = requests.post(url, data=payload, timeout=10)
+        response = requests.post(url, data=payload, headers=headers, timeout=10)
         print(f"API Request: {payload}")
         print(f"API Response: {response.status_code}, {response.text}")
         if response.status_code == 200:

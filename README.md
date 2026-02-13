@@ -37,7 +37,8 @@ url = "https://your-agent-endpoint/translate"
 input_data = {
     "text": "Hello world!",
     "source_language": "en",
-    "target_language": "es"
+  "target_language": "es",
+  "api_key": "your_api_key_here"
 }
 response = requests.post(url, json=input_data)
 print(response.json())

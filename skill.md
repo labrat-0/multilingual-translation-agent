@@ -7,6 +7,7 @@ This agent provides language translation as a Skill-as-a-Service for other agent
 - `text`: String. Text to be translated.
 - `source_language`: String. Language code of the input text (e.g., "EN").
 - `target_language`: String. Language code of the output text (e.g., "DE").
+- `api_key` (optional): String. Your LibreTranslate API key. Leave blank if not available.
 - `tone` (optional): String. Desired tone or style of translation.
 
 ## Outputs

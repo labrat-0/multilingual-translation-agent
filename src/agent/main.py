@@ -37,7 +37,8 @@ async def main():
         # 2. Run your translation logic
         # Note: The first time this runs, it WILL be slow because 
         # it's downloading the model (~300MB) inside the RUNNING actor.
-        translation = translate_text(text, actor_input.get("source_language", "en"), target_lang)
+        api_key = actor_input.get("api_key")
+        translation = translate_text(text, actor_input.get("source_language", "en"), target_lang, api_key=api_key)
 
         # 3. PUSH THE DATA (This makes it appear in the 'Results' tab)
         import time
