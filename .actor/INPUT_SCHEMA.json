@@ -1,36 +1,37 @@
 {
     "title": "Multilingual Translation Agent",
-    "description": "AI-powered agent that translates text with automatic language detection.",
+    "description": "Translates text between 50+ languages with per-character billing. Powered by LibreTranslate.",
     "type": "object",
     "schemaVersion": 1,
     "properties": {
         "text": {
             "title": "Text to Translate",
             "type": "string",
-            "description": "Enter the text you want the agent to process. Use this for long-form content or single sentences.",
+            "description": "The text you want translated. Maximum 5000 characters.",
             "editor": "textarea",
             "prefill": "How are you today?"
         },
         "target_language": {
             "title": "Target Language",
             "type": "string",
-            "description": "The ISO code of the language you want to translate TO (e.g., FR for French, ES for Spanish). Must be a valid ISO 639-1 code.",
+            "description": "ISO 639-1 code of the language to translate TO (e.g., es for Spanish, fr for French, de for German, zh-hans for Chinese).",
             "editor": "textfield",
-            "default": "FR"
+            "default": "es"
         },
         "source_language": {
             "title": "Source Language (Optional)",
             "type": "string",
-            "description": "The ISO code of the source language. Leave blank, and the agent will detect it automatically. Must be a valid ISO 639-1 code.",
+            "description": "ISO 639-1 code of the source language. Leave blank for auto-detection.",
             "editor": "textfield",
             "nullable": true
         },
         "api_key": {
-            "title": "API Key (Optional)",
+            "title": "LibreTranslate API Key (Optional)",
             "type": "string",
-            "description": "Your LibreTranslate API key. Leave blank if not available.",
+            "description": "Only needed if you want to use your own LibreTranslate instance. Leave blank to use the default translation backend.",
             "editor": "textfield",
-            "nullable": true
+            "nullable": true,
+            "isSecret": true
         }
     },
     "required": ["text", "target_language"],

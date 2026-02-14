@@ -1,17 +1,19 @@
 # Multilingual Translation Agent
 
-Apify Actor that provides fast text translation powered by LibreTranslate. It accepts source/target language codes, validates inputs, and returns translated text plus per-character billing data. LibreTranslate now requires an API key; supply it through the `api_key` input field.
+Apify Actor that provides fast text translation powered by LibreTranslate. Accepts ISO 639-1 language codes, validates inputs, and returns translated text with per-character billing data. Supports both self-hosted and public LibreTranslate endpoints.
 
 ## Features
 - ISO 639-1 language validation with optional auto-detect
-- LibreTranslate HTTP API integration with API key support
-- Character counting and billing via `pricing.calculate_billing`
-- Structured Apify dataset output with timing metadata
+- 50+ supported languages via LibreTranslate
+- Configurable backend: self-hosted VPS or public API
+- Character counting and deterministic billing
+- Structured JSON output with timing metadata
+- Secure API key handling via environment variables
 
 ## Requirements
 - Python 3.11+
 - Apify platform account (for running as Actor)
-- LibreTranslate API key (get one at https://portal.libretranslate.com)
+- LibreTranslate instance (self-hosted or public)
 
 Install dependencies:
 ```bash
@@ -19,26 +21,32 @@ pip install -r requirements.txt
 ```
 
 ## Configuration
-Inputs are defined in `.actor/INPUT_SCHEMA.json`:
-- `text` (string, required)
-- `target_language` (ISO 639-1 code, required)
-- `source_language` (ISO 639-1 code, optional, defaults to auto)
-- `api_key` (string, optional but required by LibreTranslate)
+
+### Actor Inputs
+Defined in `.actor/INPUT_SCHEMA.json`:
+- `text` (string, required) -- text to translate, max 5000 characters
+- `target_language` (string, required) -- ISO 639-1 target code (e.g., `es`, `fr`, `zh-hans`)
+- `source_language` (string, optional) -- ISO 639-1 source code, defaults to auto-detect
+- `api_key` (string, optional) -- only needed if using your own LibreTranslate instance
+
+### Environment Variables
+Set these in Apify Actor settings for self-hosted mode:
+- `LIBRETRANSLATE_URL` -- your LibreTranslate endpoint (e.g., `https://translate.yourdomain.com/translate`)
+- `LIBRETRANSLATE_API_KEY` -- server-side API key for your instance
+
+If not set, the actor falls back to the public LibreTranslate API.
 
 ## Usage
 ### Local (CLI)
 ```bash
 APIFY_TOKEN=your-token apify run
 ```
-Provide an input JSON file with the fields above, or set them via Apify console.
 
 ### Example Input
 ```json
 {
   "text": "How are you today my friend?",
-  "source_language": "en",
-  "target_language": "es",
-  "api_key": "YOUR_LIBRETRANSLATE_KEY"
+  "target_language": "es"
 }
 ```
 
@@ -49,22 +57,23 @@ Provide an input JSON file with the fields above, or set them via Apify console.
   "translated_text": "¿Cómo estás hoy mi amigo?",
   "character_count": 29,
   "billing_amount": 0.00058,
-  "source_language": "en",
+  "source_language": "auto",
   "target_language": "es",
-  "translation_time": 0.48
+  "translation_time": 0.482
 }
 ```
 
-## Development Notes
-- Actor entry point: `src/agent/main.py`
-- Translation logic: `src/agent/translator.py`
-- Pricing logic: `src/agent/pricing.py`
-- Dependencies pinned in `requirements.txt` for reproducible builds
+## Architecture
+- `src/agent/main.py` -- Actor entry point, input validation, orchestration
+- `src/agent/translator.py` -- LibreTranslate API client with configurable endpoint
+- `src/agent/pricing.py` -- Deterministic per-character billing ($0.00002/char)
+- `skill.md` -- Machine-readable skill contract for agent discovery
 
 ## Troubleshooting
-- **400 error mentioning API key**: ensure `api_key` is included and valid.
-- **Invalid language code**: use lowercase ISO 639-1 codes (e.g., `en`, `es`).
-- **Large payload rejection**: inputs above 5000 characters are rejected by design.
+- **401/403 error**: check `LIBRETRANSLATE_API_KEY` or actor `api_key` input
+- **400 error**: verify language codes are valid ISO 639-1 (e.g., `en`, `es`, `zh-hans`)
+- **Empty response**: LibreTranslate may not support the requested language pair
+- **Timeout**: increase `TIMEOUT_SECONDS` in translator.py or check VPS health
 
 ## License
 See `LICENSE` file for details.
