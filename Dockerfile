@@ -1,5 +1,5 @@
 # 1. Use a stable, lightweight Python base
-FROM python:3.11-slim
+FROM python:3.12-slim
 
 # 2. Set environment variables to ensure logs are visible and paths are correct
 ENV PYTHONDONTWRITEBYTECODE=1

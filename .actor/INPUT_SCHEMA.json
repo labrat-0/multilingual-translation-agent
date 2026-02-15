@@ -1,20 +1,20 @@
 {
     "title": "Multilingual Translation Agent",
-    "description": "Translates text between 50+ languages with per-character billing. Powered by LibreTranslate.",
+    "description": "Multi-provider translation switchboard. Translate text using LibreTranslate (free), OpenAI, Anthropic, or Google Gemini. One stable interface, multiple backends.",
     "type": "object",
     "schemaVersion": 1,
     "properties": {
         "text": {
             "title": "Text to Translate",
             "type": "string",
-            "description": "The text you want translated. Maximum 5000 characters.",
+            "description": "The text you want translated. Maximum 10,000 characters.",
             "editor": "textarea",
             "prefill": "How are you today?"
         },
         "target_language": {
             "title": "Target Language",
             "type": "string",
-            "description": "ISO 639-1 code of the language to translate TO (e.g., es for Spanish, fr for French, de for German, zh-hans for Chinese).",
+            "description": "ISO 639-1 code of the language to translate TO (e.g., es for Spanish, fr for French, de for German, ja for Japanese, zh for Chinese, ar for Arabic, ko for Korean).",
             "editor": "textfield",
             "default": "es"
         },
@@ -25,13 +25,63 @@
             "editor": "textfield",
             "nullable": true
         },
-        "api_key": {
-            "title": "LibreTranslate API Key (Optional)",
+        "provider": {
+            "title": "Translation Provider",
             "type": "string",
-            "description": "Only needed if you want to use your own LibreTranslate instance. Leave blank to use the default translation backend.",
+            "description": "Which translation backend to use. LibreTranslate is free and requires no API key. OpenAI, Anthropic, and Gemini require an API key.",
+            "editor": "select",
+            "default": "libretranslate",
+            "enum": ["libretranslate", "openai", "anthropic", "gemini"],
+            "enumTitles": ["LibreTranslate (Free)", "OpenAI", "Anthropic (Claude)", "Google Gemini"]
+        },
+        "api_key": {
+            "title": "API Key",
+            "type": "string",
+            "description": "API key for the selected provider. Required for OpenAI, Anthropic, and Gemini. Optional for LibreTranslate (only needed for self-hosted instances).",
             "editor": "textfield",
             "nullable": true,
             "isSecret": true
+        },
+        "model": {
+            "title": "Model (Optional)",
+            "type": "string",
+            "description": "Model to use for LLM providers. Defaults: OpenAI = gpt-4o-mini, Anthropic = claude-3-5-haiku-latest, Gemini = gemini-2.0-flash. Ignored for LibreTranslate.",
+            "editor": "textfield",
+            "nullable": true
+        },
+        "endpoint": {
+            "title": "Custom Endpoint (Optional)",
+            "type": "string",
+            "description": "Custom API endpoint URL. For LibreTranslate: your self-hosted instance URL. For OpenAI: Azure OpenAI or OpenRouter-compatible endpoint. Leave blank for default endpoints.",
+            "editor": "textfield",
+            "nullable": true
+        },
+        "temperature": {
+            "title": "Temperature (Optional)",
+            "type": "number",
+            "description": "Controls randomness for LLM providers (0 = deterministic, 1 = creative). Default: 0. Ignored for LibreTranslate.",
+            "editor": "number",
+            "default": 0,
+            "minimum": 0,
+            "maximum": 1
+        },
+        "maxRetries": {
+            "title": "Max Retries",
+            "type": "integer",
+            "description": "Maximum number of retry attempts on transient failures.",
+            "editor": "number",
+            "default": 3,
+            "minimum": 1,
+            "maximum": 10
+        },
+        "timeoutSecs": {
+            "title": "Timeout (seconds)",
+            "type": "integer",
+            "description": "HTTP request timeout in seconds.",
+            "editor": "number",
+            "default": 30,
+            "minimum": 5,
+            "maximum": 120
         }
     },
     "required": ["text", "target_language"],

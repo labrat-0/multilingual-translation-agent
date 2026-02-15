@@ -1,9 +1,9 @@
 {
   "actorSpecification": 1,
   "name": "multilingual-translation-agent",
-  "title": "Multilingual Translation Utility Agent",
-  "description": "Translates text between languages using LibreTranslate. Accepts ISO 639-1 language codes, validates inputs, and returns translated text with per-character billing. Supports self-hosted and public LibreTranslate endpoints.",
-  "version": "0.2.0",
+  "title": "Multilingual Translation Agent",
+  "description": "Multi-provider translation switchboard. Translate text using LibreTranslate (free), OpenAI, Anthropic Claude, or Google Gemini. One stable JSON interface, multiple backends, MCP-ready for AI agents.",
+  "version": "1.0.0",
   "dockerfile": "./Dockerfile",
   "main": "src/agent/main.py",
   "input": "./INPUT_SCHEMA.json",

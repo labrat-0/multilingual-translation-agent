@@ -1,84 +1,152 @@
+"""
+Multilingual Translation Agent -- Apify Actor entry point.
+
+Routes translation requests to the selected provider (LibreTranslate, OpenAI,
+Anthropic, Google Gemini) and outputs a stable JSON schema.
+"""
+
 import asyncio
-import re
+import logging
 import time
 from typing import Any, Dict
 
 from apify import Actor
 
 from .translator import translate_text
+from .validation import (
+    validate_api_key,
+    validate_endpoint,
+    validate_language_code,
+    validate_model,
+    validate_provider,
+    validate_text,
+    sanitize_text,
+    DEFAULT_MODELS,
+)
 
-ISO_CODE_PATTERN = re.compile(r"^[a-z]{2}(-[a-zA-Z]{2,4})?$")
-MAX_TEXT_LENGTH = 5000
-
-
-def is_valid_lang_code(code: str | None) -> bool:
-    """Validate ISO 639-1 code, with optional subtag (e.g., zh-Hans, pt-BR)."""
-    if not code:
-        return False
-    return bool(ISO_CODE_PATTERN.fullmatch(code))
-
-
-def normalize_code(code: str) -> str:
-    return code.lower()
+logger = logging.getLogger(__name__)
 
 
 async def main() -> None:
     async with Actor:
         actor_input: Dict[str, Any] = await Actor.get_input() or {}
-        text = actor_input.get("text", "")
-        target_lang = normalize_code(actor_input.get("target_language", "fr"))
-        source_lang = (
-            normalize_code(actor_input.get("source_language", "en"))
-            if actor_input.get("source_language")
-            else "auto"
-        )
 
-        if not text:
-            await Actor.fail("No text provided in input.")
-            return
+        # -----------------------------------------------------------------
+        # Parse inputs
+        # -----------------------------------------------------------------
+        text_raw = actor_input.get("text", "")
+        target_language = actor_input.get("target_language", "es").lower().strip()
+        source_language_raw = actor_input.get("source_language")
+        source_language = source_language_raw.lower().strip() if source_language_raw else "auto"
 
-        if len(text) > MAX_TEXT_LENGTH:
-            await Actor.fail(
-                f"Text exceeds maximum length of {MAX_TEXT_LENGTH} characters."
-            )
-            return
-
-        if not is_valid_lang_code(target_lang):
-            await Actor.fail(
-                f"Invalid target language code '{target_lang}'. Must be ISO 639-1 (e.g., 'es', 'zh-hans')."
-            )
-            return
-
-        if source_lang != "auto" and not is_valid_lang_code(source_lang):
-            await Actor.fail(
-                f"Invalid source language code '{source_lang}'. Must be ISO 639-1 (e.g., 'en', 'pt-br')."
-            )
-            return
-
-        # api_key from input is optional -- translator.py falls back to env var
+        provider = actor_input.get("provider", "libretranslate").lower().strip()
         api_key = actor_input.get("api_key")
+        model = actor_input.get("model")
+        endpoint = actor_input.get("endpoint")
+        temperature = actor_input.get("temperature", 0)
+        max_retries = actor_input.get("maxRetries", 3)
+        timeout_secs = actor_input.get("timeoutSecs", 30)
+
+        # -----------------------------------------------------------------
+        # Validate inputs
+        # -----------------------------------------------------------------
+
+        # Provider
+        provider_err = validate_provider(provider)
+        if provider_err:
+            await Actor.fail(provider_err)
+            return
+
+        # Text
+        text = sanitize_text(text_raw)
+        text_err = validate_text(text)
+        if text_err:
+            await Actor.fail(text_err)
+            return
+
+        # Language codes
+        if not validate_language_code(target_language):
+            await Actor.fail(
+                f"Invalid target language code '{target_language}'. "
+                "Must be ISO 639-1 (e.g., 'es', 'fr', 'zh-hans')."
+            )
+            return
+
+        if source_language != "auto" and not validate_language_code(source_language):
+            await Actor.fail(
+                f"Invalid source language code '{source_language}'. "
+                "Must be ISO 639-1 (e.g., 'en', 'pt-br')."
+            )
+            return
+
+        # API key
+        key_err = validate_api_key(provider, api_key)
+        if key_err:
+            await Actor.fail(key_err)
+            return
+
+        # Model
+        resolved_model, model_err = validate_model(provider, model)
+        if model_err:
+            await Actor.fail(model_err)
+            return
+
+        # Endpoint
+        endpoint_err = validate_endpoint(provider, endpoint)
+        if endpoint_err:
+            await Actor.fail(endpoint_err)
+            return
+
+        # -----------------------------------------------------------------
+        # Translate
+        # -----------------------------------------------------------------
+        logger.info(
+            "Translating %d chars with provider=%s model=%s",
+            len(text), provider, resolved_model or "(n/a)",
+        )
 
         start_time = time.time()
-        translation = translate_text(text, source_lang, target_lang, api_key=api_key)
-        duration = time.time() - start_time
+        result = translate_text(
+            text=text,
+            source_language=source_language,
+            target_language=target_language,
+            provider=provider,
+            api_key=api_key,
+            model=resolved_model,
+            endpoint=endpoint,
+            temperature=temperature,
+            timeout=timeout_secs,
+            max_retries=max_retries,
+        )
+        processing_time = round(time.time() - start_time, 3)
 
-        if translation.get("error"):
-            await Actor.fail(translation["error"])
+        # -----------------------------------------------------------------
+        # Handle error
+        # -----------------------------------------------------------------
+        if result.get("error"):
+            await Actor.fail(result["error"])
             return
 
-        await Actor.push_data(
-            {
-                "original_text": text,
-                "translated_text": translation["translated_text"],
-                "target_language": target_lang,
-                "source_language": source_lang,
-                "character_count": translation["character_count"],
-                "billing_amount": translation["billing_amount"],
-                "translation_time": round(duration, 3),
-            }
-        )
+        # -----------------------------------------------------------------
+        # Push stable output -- no missing keys
+        # -----------------------------------------------------------------
+        output = {
+            "schema_version": "1.0",
+            "provider": provider,
+            "model": result.get("model_used", ""),
+            "source_language": source_language,
+            "target_language": target_language,
+            "detected_language": result.get("detected_language", ""),
+            "original_text": text,
+            "translated_text": result.get("translated_text", ""),
+            "character_count": result.get("character_count", 0),
+            "billing_amount": result.get("billing_amount", 0.0),
+            "finish_reason": result.get("finish_reason", ""),
+            "processing_time": processing_time,
+        }
 
-        print("Done! Check the 'Results' tab.")
+        await Actor.push_data(output)
+        logger.info("Translation complete in %.3fs", processing_time)
 
 
 if __name__ == "__main__":

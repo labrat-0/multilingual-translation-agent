@@ -1,14 +1,23 @@
 """
-Pricing utility for the Multilingual Translation Utility Agent.
+Pricing utility for the Multilingual Translation Agent.
 
-Calculates per-character billing for agent usage.
+Flat per-character billing regardless of provider.
+Apify PPE pricing ($0.0005/result) is handled at the platform level.
+This module calculates the internal character-based billing for audit/transparency.
 """
 
-PER_CHARACTER_RATE = 0.00002  # Example: $0.00002 per character
+from __future__ import annotations
 
-def calculate_billing(text: str) -> dict:
+PER_CHARACTER_RATE = 0.00002  # $0.00002 per character (all providers)
+
+
+def calculate_billing(text: str, provider: str = "libretranslate") -> dict:
     """
     Calculate billing based on input text length.
+
+    Args:
+        text: The input text being translated.
+        provider: Translation provider (unused for now -- flat rate).
 
     Returns:
         dict: {
@@ -23,5 +32,5 @@ def calculate_billing(text: str) -> dict:
 
 if __name__ == "__main__":
     text = "Hello world!"
-    bill = calculate_billing(text)
+    bill = calculate_billing(text, "openai")
     print(f"Characters: {bill['character_count']}, Amount: ${bill['amount']}")
