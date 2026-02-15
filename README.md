@@ -1,6 +1,6 @@
 # Multilingual Translation Agent
 
-Apify Actor that provides fast text translation powered by LibreTranslate. Accepts ISO 639-1 language codes, validates inputs, and returns translated text with per-character billing data. Supports both self-hosted and public LibreTranslate endpoints.
+Apify Actor that provides fast text translation powered by LibreTranslate. Accepts ISO 639-1 language codes, validates inputs, and returns translated text with per-character billing data. Supports both self-hosted and public LibreTranslate endpoints. MCP-ready for AI agent integration.
 
 ## Features
 - ISO 639-1 language validation with optional auto-detect
@@ -77,3 +77,31 @@ APIFY_TOKEN=your-token apify run
 
 ## License
 See `LICENSE` file for details.
+
+---
+
+## MCP Integration
+
+This actor works as an MCP tool through Apify's hosted MCP server. No custom server needed.
+
+- **Endpoint:** `https://mcp.apify.com?tools=labrat011/multilingual-translation-agent`
+- **Auth:** `Authorization: Bearer <APIFY_TOKEN>`
+- **Transport:** Streamable HTTP
+- **Works with:** Claude Desktop, Cursor, VS Code, Windsurf, Warp, Gemini CLI
+
+**Example MCP config (Claude Desktop / Cursor):**
+
+```json
+{
+    "mcpServers": {
+        "multilingual-translation-agent": {
+            "url": "https://mcp.apify.com?tools=labrat011/multilingual-translation-agent",
+            "headers": {
+                "Authorization": "Bearer <APIFY_TOKEN>"
+            }
+        }
+    }
+}
+```
+
+AI agents can use this actor to translate text between 50+ languages, auto-detect source languages, and integrate multilingual translation into agent workflows -- all as a callable MCP tool.
