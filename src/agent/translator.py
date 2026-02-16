@@ -1,7 +1,7 @@
 """
 Multi-provider translation engine.
 
-Supports: LibreTranslate (free), OpenAI, Anthropic (Claude), Google Gemini.
+Supports: LibreTranslate, OpenAI, Anthropic (Claude), Google Gemini.
 Each provider returns the same stable dict shape.
 """
 

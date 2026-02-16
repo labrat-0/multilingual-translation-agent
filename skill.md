@@ -1,14 +1,14 @@
 # Multilingual Translation Agent Skill
 
 ## Description
-Multi-provider translation switchboard for AI agents. Translate text between 50+ languages using LibreTranslate (free), OpenAI, Anthropic Claude, or Google Gemini. One stable JSON interface, multiple backends. Designed for seamless integration in multi-agent workflows as a Skill-as-a-Service.
+Multi-provider translation switchboard for AI agents. Translate text between 50+ languages using LibreTranslate, OpenAI, Anthropic Claude, or Google Gemini. One stable JSON interface, multiple backends. Designed for seamless integration in multi-agent workflows as a Skill-as-a-Service.
 
 ## Inputs
 - `text`: String (required). Text to be translated. Maximum 10,000 characters.
 - `target_language`: String (required). ISO 639-1 code of the target language (e.g., "es", "fr", "de", "ja").
 - `source_language`: String (optional). ISO 639-1 code of the source language. Defaults to auto-detect.
-- `provider`: String (optional). Translation backend: "libretranslate" (free, default), "openai", "anthropic", "gemini".
-- `api_key`: String (optional/required). API key for the selected provider. Required for OpenAI, Anthropic, and Gemini.
+- `provider`: String (optional). Translation backend: "libretranslate" (default), "openai", "anthropic", "gemini".
+- `api_key`: String (required). API key for the selected provider. Required for all providers including LibreTranslate.
 - `model`: String (optional). Override the default model for LLM providers.
 - `endpoint`: String (optional). Custom API endpoint URL.
 - `temperature`: Number (optional). LLM randomness (0-1). Default: 0.
@@ -31,8 +31,8 @@ Multi-provider translation switchboard for AI agents. Translate text between 50+
 
 ## Providers
 
-### LibreTranslate (free)
-- No API key required
+### LibreTranslate
+- API key required (sign up at libretranslate.com)
 - 50+ languages
 - Best for: bulk translation, prototyping, cost-sensitive workflows
 

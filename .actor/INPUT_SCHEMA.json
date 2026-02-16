@@ -1,6 +1,6 @@
 {
     "title": "Multilingual Translation Agent",
-    "description": "Multi-provider translation switchboard. Translate text using LibreTranslate (free), OpenAI, Anthropic, or Google Gemini. One stable interface, multiple backends.",
+    "description": "Multi-provider translation switchboard. Translate text using LibreTranslate, OpenAI, Anthropic, or Google Gemini. One stable interface, multiple backends.",
     "type": "object",
     "schemaVersion": 1,
     "properties": {
@@ -28,16 +28,16 @@
         "provider": {
             "title": "Translation Provider",
             "type": "string",
-            "description": "Which translation backend to use. LibreTranslate is free and requires no API key. OpenAI, Anthropic, and Gemini require an API key.",
+            "description": "Which translation backend to use. All providers require an API key.",
             "editor": "select",
             "default": "libretranslate",
             "enum": ["libretranslate", "openai", "anthropic", "gemini"],
-            "enumTitles": ["LibreTranslate (Free)", "OpenAI", "Anthropic (Claude)", "Google Gemini"]
+            "enumTitles": ["LibreTranslate", "OpenAI", "Anthropic (Claude)", "Google Gemini"]
         },
         "api_key": {
             "title": "API Key",
             "type": "string",
-            "description": "API key for the selected provider. Required for OpenAI, Anthropic, and Gemini. Optional for LibreTranslate (only needed for self-hosted instances).",
+            "description": "API key for the selected provider. Required for all providers. For LibreTranslate, sign up at libretranslate.com to get an API key.",
             "editor": "textfield",
             "nullable": true,
             "isSecret": true

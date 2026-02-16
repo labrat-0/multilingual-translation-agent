@@ -97,9 +97,6 @@ def validate_model(provider: str, model: str | None) -> tuple[str, str | None]:
 
 def validate_api_key(provider: str, api_key: str | None) -> str | None:
     """Return error message if API key is missing when required."""
-    if provider == "libretranslate":
-        return None  # optional for Libre
-
     if not api_key or not api_key.strip():
         return f"API key is required for provider '{provider}'."
 

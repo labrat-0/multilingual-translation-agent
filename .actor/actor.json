@@ -2,7 +2,7 @@
   "actorSpecification": 1,
   "name": "multilingual-translation-agent",
   "title": "Multilingual Translation Agent",
-  "description": "Multi-provider translation switchboard. Translate text using LibreTranslate (free), OpenAI, Anthropic Claude, or Google Gemini. One stable JSON interface, multiple backends, MCP-ready for AI agents.",
+  "description": "Multi-provider translation switchboard. Translate text using LibreTranslate, OpenAI, Anthropic Claude, or Google Gemini. One stable JSON interface, multiple backends, MCP-ready for AI agents.",
   "version": "1.0.0",
   "dockerfile": "./Dockerfile",
   "main": "src/agent/main.py",

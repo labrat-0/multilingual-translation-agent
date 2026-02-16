@@ -1,11 +1,10 @@
 # Multilingual Translation Agent
 
-Multi-provider translation switchboard for AI agents. Translate text using LibreTranslate (free), OpenAI, Anthropic Claude, or Google Gemini through one stable JSON interface. MCP-ready for AI agent integration.
+Multi-provider translation switchboard for AI agents. Translate text using LibreTranslate, OpenAI, Anthropic Claude, or Google Gemini through one stable JSON interface. MCP-ready for AI agent integration.
 
 ## Features
 
 - **4 translation providers** behind one interface: LibreTranslate, OpenAI, Anthropic, Gemini
-- **Free tier included**: LibreTranslate requires no API key
 - **LLM-quality translation**: OpenAI, Anthropic, and Gemini for high-quality, context-aware output
 - **Stable JSON output**: `schema_version: "1.0"`, no missing keys, predictable contract
 - ISO 639-1 language validation with auto-detect support
@@ -18,7 +17,7 @@ Multi-provider translation switchboard for AI agents. Translate text using Libre
 
 | Provider | Cost | Quality | API Key Required | Best For |
 |----------|------|---------|------------------|----------|
-| LibreTranslate | Free | Good | No | Bulk translation, prototyping |
+| LibreTranslate | Paid (API key required) | Good | Yes | Bulk translation, prototyping |
 | OpenAI (gpt-4o-mini) | Pay-per-token | Excellent | Yes | High-quality, nuanced text |
 | Anthropic (claude-3-5-haiku) | Pay-per-token | Excellent | Yes | Careful, faithful translation |
 | Google Gemini (gemini-2.0-flash) | Free tier available | Excellent | Yes | Fast, cost-effective LLM |
@@ -27,7 +26,7 @@ Multi-provider translation switchboard for AI agents. Translate text using Libre
 
 - Python 3.12+
 - Apify platform account (for running as Actor)
-- API key for OpenAI / Anthropic / Gemini (if using those providers)
+- API key for your selected provider (LibreTranslate, OpenAI, Anthropic, or Gemini)
 
 Install dependencies:
 ```bash
@@ -46,7 +45,7 @@ Defined in `.actor/INPUT_SCHEMA.json`:
 | `target_language` | string | Yes | `es` | ISO 639-1 target code |
 | `source_language` | string | No | auto-detect | ISO 639-1 source code |
 | `provider` | enum | No | `libretranslate` | `libretranslate`, `openai`, `anthropic`, `gemini` |
-| `api_key` | string | Depends | -- | Required for OpenAI/Anthropic/Gemini |
+| `api_key` | string | Yes | -- | API key for the selected provider |
 | `model` | string | No | per-provider default | Override default model |
 | `endpoint` | string | No | -- | Custom API endpoint URL |
 | `temperature` | number | No | `0` | LLM randomness (0-1) |
@@ -55,9 +54,9 @@ Defined in `.actor/INPUT_SCHEMA.json`:
 
 ### Environment Variables
 
-For LibreTranslate self-hosted mode:
-- `LIBRETRANSLATE_URL` -- your LibreTranslate endpoint
-- `LIBRETRANSLATE_API_KEY` -- server-side API key for your instance
+For LibreTranslate, you can optionally override the default endpoint and API key via environment variables:
+- `LIBRETRANSLATE_URL` -- your LibreTranslate endpoint (defaults to `https://libretranslate.com/translate`)
+- `LIBRETRANSLATE_API_KEY` -- your LibreTranslate API key
 
 ## Usage
 
@@ -68,12 +67,13 @@ APIFY_TOKEN=your-token apify run
 
 ### Example Inputs
 
-**LibreTranslate (free, no key):**
+**LibreTranslate:**
 ```json
 {
   "text": "How are you today, friend?",
   "target_language": "es",
-  "provider": "libretranslate"
+  "provider": "libretranslate",
+  "api_key": "your-libretranslate-api-key"
 }
 ```
 
