@@ -15,12 +15,12 @@ Multi-provider translation switchboard for AI agents. Translate text using Libre
 
 ## Provider Comparison
 
-| Provider | Cost | Quality | API Key Required | Best For |
-|----------|------|---------|------------------|----------|
-| LibreTranslate | Paid (API key required) | Good | Yes | Bulk translation, prototyping |
-| OpenAI (gpt-4o-mini) | Pay-per-token | Excellent | Yes | High-quality, nuanced text |
-| Anthropic (claude-3-5-haiku) | Pay-per-token | Excellent | Yes | Careful, faithful translation |
-| Google Gemini (gemini-2.0-flash) | Free tier available | Excellent | Yes | Fast, cost-effective LLM |
+| Provider | Cost | Quality | API Key Required | Char Limit | Best For |
+|----------|------|---------|------------------|------------|----------|
+| LibreTranslate | From $29/mo | Good | Yes ([get key](https://portal.libretranslate.com)) | 2,000/request | Bulk translation, prototyping |
+| OpenAI (gpt-4o-mini) | Pay-per-token | Excellent | Yes | 10,000 | High-quality, nuanced text |
+| Anthropic (claude-3-5-haiku) | Pay-per-token | Excellent | Yes | 10,000 | Careful, faithful translation |
+| Google Gemini (gemini-2.0-flash) | Free tier available | Excellent | Yes | 10,000 | Fast, cost-effective LLM |
 
 ## Requirements
 
@@ -41,7 +41,7 @@ Defined in `.actor/INPUT_SCHEMA.json`:
 
 | Input | Type | Required | Default | Description |
 |-------|------|----------|---------|-------------|
-| `text` | string | Yes | -- | Text to translate (max 10,000 chars) |
+| `text` | string | Yes | -- | Text to translate (max 10,000 chars; 2,000 for LibreTranslate) |
 | `target_language` | string | Yes | `es` | ISO 639-1 target code |
 | `source_language` | string | No | auto-detect | ISO 639-1 source code |
 | `provider` | enum | No | `libretranslate` | `libretranslate`, `openai`, `anthropic`, `gemini` |

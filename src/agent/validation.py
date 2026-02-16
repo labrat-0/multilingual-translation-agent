@@ -66,6 +66,7 @@ ALLOWED_ENDPOINT_HOSTS: dict[str, list[re.Pattern]] = {
 ISO_CODE_PATTERN = re.compile(r"^[a-z]{2}(-[a-zA-Z]{2,4})?$")
 
 MAX_TEXT_LENGTH = 10_000
+LIBRETRANSLATE_CHAR_LIMIT = 2_000  # libretranslate.com managed service limit
 
 
 # ---------------------------------------------------------------------------
@@ -137,12 +138,20 @@ def validate_language_code(code: str | None) -> bool:
     return bool(ISO_CODE_PATTERN.fullmatch(code))
 
 
-def validate_text(text: str) -> str | None:
+def validate_text(text: str, provider: str = "", endpoint: str | None = None) -> str | None:
     """Return error if text is invalid."""
     if not text or not text.strip():
         return "No text provided in input."
     if len(text) > MAX_TEXT_LENGTH:
         return f"Text exceeds maximum length of {MAX_TEXT_LENGTH} characters ({len(text)} provided)."
+    # Enforce 2,000 char limit for the managed LibreTranslate service.
+    # Self-hosted instances (custom endpoint) may have different limits.
+    if provider == "libretranslate" and not endpoint and len(text) > LIBRETRANSLATE_CHAR_LIMIT:
+        return (
+            f"Text exceeds LibreTranslate's {LIBRETRANSLATE_CHAR_LIMIT}-character limit "
+            f"({len(text)} provided). Split your text into smaller chunks or use a "
+            f"custom endpoint with a self-hosted instance."
+        )
     return None
 
 

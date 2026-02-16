@@ -4,7 +4,7 @@
 Multi-provider translation switchboard for AI agents. Translate text between 50+ languages using LibreTranslate, OpenAI, Anthropic Claude, or Google Gemini. One stable JSON interface, multiple backends. Designed for seamless integration in multi-agent workflows as a Skill-as-a-Service.
 
 ## Inputs
-- `text`: String (required). Text to be translated. Maximum 10,000 characters.
+- `text`: String (required). Text to be translated. Maximum 10,000 characters (2,000 for LibreTranslate's managed service).
 - `target_language`: String (required). ISO 639-1 code of the target language (e.g., "es", "fr", "de", "ja").
 - `source_language`: String (optional). ISO 639-1 code of the source language. Defaults to auto-detect.
 - `provider`: String (optional). Translation backend: "libretranslate" (default), "openai", "anthropic", "gemini".
@@ -32,7 +32,8 @@ Multi-provider translation switchboard for AI agents. Translate text between 50+
 ## Providers
 
 ### LibreTranslate
-- API key required (sign up at libretranslate.com)
+- API key required (sign up at [portal.libretranslate.com](https://portal.libretranslate.com))
+- 2,000 character limit per request (managed service)
 - 50+ languages
 - Best for: bulk translation, prototyping, cost-sensitive workflows
 
@@ -61,7 +62,7 @@ Multi-provider translation switchboard for AI agents. Translate text between 50+
 English (en), Spanish (es), French (fr), German (de), Japanese (ja), Portuguese (pt), Korean (ko), Arabic (ar), Russian (ru), Hindi (hi), Chinese Simplified (zh-hans), Chinese Traditional (zh-hant), Italian (it), Dutch (nl), Turkish (tr), Polish (pl), Swedish (sv), Danish (da), Norwegian (no), Finnish (fi), Czech (cs), Greek (el), Hebrew (he), Thai (th), Vietnamese (vi), Indonesian (id), Malay (ms), Ukrainian (uk), Romanian (ro), Hungarian (hu), Bulgarian (bg), Croatian (hr), Slovak (sk), Slovenian (sl), Lithuanian (lt), Latvian (lv), Estonian (et), Bengali (bn), Tamil (ta), Telugu (te), Marathi (mr), Urdu (ur), Persian (fa), Swahili (sw), Filipino (tl), Afrikaans (af).
 
 ## Constraints
-- Maximum input length: 10,000 characters.
+- Maximum input length: 10,000 characters (2,000 for LibreTranslate's managed service).
 - Translates text only; no scraping or private data processing.
 - Must respect agent-to-agent calling conventions.
 - Deterministic character count required for accurate billing.

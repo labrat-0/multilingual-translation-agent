@@ -59,7 +59,7 @@ async def main() -> None:
 
         # Text
         text = sanitize_text(text_raw)
-        text_err = validate_text(text)
+        text_err = validate_text(text, provider=provider, endpoint=endpoint)
         if text_err:
             await Actor.fail(text_err)
             return

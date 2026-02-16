@@ -83,22 +83,21 @@ def _translate_libretranslate(
     url = endpoint or DEFAULT_ENDPOINTS["libretranslate"]
     resolved_key = api_key or os.environ.get("LIBRETRANSLATE_API_KEY", "")
 
-    headers: dict[str, str] = {"Content-Type": "application/x-www-form-urlencoded"}
-    if resolved_key:
-        headers["Authorization"] = f"Bearer {resolved_key}"
+    headers: dict[str, str] = {"Content-Type": "application/json"}
 
-    payload = {
+    payload: dict[str, Any] = {
         "q": text,
         "source": source_language,
         "target": target_language,
         "format": "text",
+        "api_key": resolved_key,
     }
 
     last_error = ""
     for attempt in range(max_retries):
         try:
             with httpx.Client(timeout=timeout) as client:
-                response = client.post(url, data=payload, headers=headers)
+                response = client.post(url, json=payload, headers=headers)
 
             if response.status_code == 200:
                 data = response.json()
@@ -106,10 +105,16 @@ def _translate_libretranslate(
                 if not translated:
                     return {"error": "LibreTranslate returned an empty response."}
 
+                # Extract detected language if auto-detect was used
+                detected = ""
+                detected_info = data.get("detectedLanguage")
+                if detected_info and isinstance(detected_info, dict):
+                    detected = detected_info.get("language", "")
+
                 billing = calculate_billing(text, "libretranslate")
                 return {
                     "translated_text": translated,
-                    "detected_language": "",
+                    "detected_language": detected,
                     "character_count": billing["character_count"],
                     "billing_amount": billing["amount"],
                     "finish_reason": "",
