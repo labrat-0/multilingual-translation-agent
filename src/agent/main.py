@@ -34,6 +34,7 @@ async def main() -> None:
         # -----------------------------------------------------------------
         # Parse inputs
         # -----------------------------------------------------------------
+        test_mode = actor_input.get("testMode", True)
         text_raw = actor_input.get("text", "")
         target_language = actor_input.get("target_language", "es").lower().strip()
         source_language_raw = actor_input.get("source_language")
@@ -46,6 +47,32 @@ async def main() -> None:
         temperature = actor_input.get("temperature", 0)
         max_retries = actor_input.get("maxRetries", 3)
         timeout_secs = actor_input.get("timeoutSecs", 30)
+
+        # -----------------------------------------------------------------
+        # Test mode -- return mock response for Apify automated QA
+        # -----------------------------------------------------------------
+        if test_mode:
+            logger.warning(
+                "Test mode enabled - returning mock response. "
+                "Disable test mode and provide an API key to perform real translations."
+            )
+            text = sanitize_text(text_raw) if text_raw else "How are you today?"
+            mock_output = {
+                "schema_version": "1.0",
+                "provider": "test-mode",
+                "model": "test-mode",
+                "source_language": source_language,
+                "target_language": target_language,
+                "detected_language": "",
+                "original_text": text,
+                "translated_text": "[TEST MODE] No translation performed - this is a mock response",
+                "character_count": 0,
+                "billing_amount": 0.0,
+                "finish_reason": "test-mode",
+                "processing_time": 0.0,
+            }
+            await Actor.push_data(mock_output)
+            return
 
         # -----------------------------------------------------------------
         # Validate inputs
