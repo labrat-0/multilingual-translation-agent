@@ -54,27 +54,27 @@ async def main() -> None:
         # Provider
         provider_err = validate_provider(provider)
         if provider_err:
-            await Actor.fail(provider_err)
+            await Actor.fail(status_message=provider_err)
             return
 
         # Text
         text = sanitize_text(text_raw)
         text_err = validate_text(text, provider=provider, endpoint=endpoint)
         if text_err:
-            await Actor.fail(text_err)
+            await Actor.fail(status_message=text_err)
             return
 
         # Language codes
         if not validate_language_code(target_language):
             await Actor.fail(
-                f"Invalid target language code '{target_language}'. "
+                status_message=f"Invalid target language code '{target_language}'. "
                 "Must be ISO 639-1 (e.g., 'es', 'fr', 'zh-hans')."
             )
             return
 
         if source_language != "auto" and not validate_language_code(source_language):
             await Actor.fail(
-                f"Invalid source language code '{source_language}'. "
+                status_message=f"Invalid source language code '{source_language}'. "
                 "Must be ISO 639-1 (e.g., 'en', 'pt-br')."
             )
             return
@@ -82,19 +82,19 @@ async def main() -> None:
         # API key
         key_err = validate_api_key(provider, api_key)
         if key_err:
-            await Actor.fail(key_err)
+            await Actor.fail(status_message=key_err)
             return
 
         # Model
         resolved_model, model_err = validate_model(provider, model)
         if model_err:
-            await Actor.fail(model_err)
+            await Actor.fail(status_message=model_err)
             return
 
         # Endpoint
         endpoint_err = validate_endpoint(provider, endpoint)
         if endpoint_err:
-            await Actor.fail(endpoint_err)
+            await Actor.fail(status_message=endpoint_err)
             return
 
         # -----------------------------------------------------------------
@@ -124,7 +124,7 @@ async def main() -> None:
         # Handle error
         # -----------------------------------------------------------------
         if result.get("error"):
-            await Actor.fail(result["error"])
+            await Actor.fail(status_message=result["error"])
             return
 
         # -----------------------------------------------------------------
