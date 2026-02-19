@@ -2,6 +2,8 @@
 
 Multi-provider translation switchboard for AI agents. Translate text using LibreTranslate, OpenAI, Anthropic Claude, or Google Gemini through one stable JSON interface. MCP-ready for AI agent integration.
 
+> **API Key Required:** This actor requires a valid API key from one of the supported providers to run. Get a key from [LibreTranslate](https://portal.libretranslate.com), [OpenAI](https://platform.openai.com), [Anthropic](https://console.anthropic.com), or [Google AI Studio](https://aistudio.google.com).
+
 ## Features
 
 - **4 translation providers** behind one interface: LibreTranslate, OpenAI, Anthropic, Gemini
