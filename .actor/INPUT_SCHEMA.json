@@ -89,7 +89,7 @@
             "description": "Returns a mock response without calling any translation API. Used for integration testing. Disable and provide an API key for real translations.",
             "editor": "checkbox",
             "default": true,
-            "prefill": false,
+            "prefill": true,
             "sectionCaption": "Advanced"
         }
     },
